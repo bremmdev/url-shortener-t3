@@ -50,7 +50,7 @@ const URLShortener = () => {
         </div>
 
         {showShort && (
-          <p className="text-center">Your short url:<a href={'https://short.bremm.dev/go/${shortenedUrl}'} className="block font-bold border-b selection:bg-amber-100 border-b-amber-100 hover:text-amber-100 my-1">{`https://short.bremm.dev/go/${shortenedUrl}`}</a></p>
+          <p className="text-center">Your short url:<a href={`https://short.bremm.dev/go/${shortenedUrl}`} className="block font-bold border-b selection:bg-amber-100 border-b-amber-100 hover:text-amber-100 my-1">{`https://short.bremm.dev/go/${shortenedUrl}`}</a></p>
         )}
         {showError && errors && <p>{errors[0]}</p>}
       </form>
