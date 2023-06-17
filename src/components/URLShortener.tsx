@@ -1,9 +1,13 @@
 import React from "react";
 import { api } from "@/utils/api";
+import copyIcon from "@public/icons/copy.svg";
+import Image from "next/image";
+import Toast from "@/components/Toast";
 
 const URLShortener = () => {
   const [inputUrl, setInputUrl] = React.useState("");
   const [shortenedUrl, setShortenedUrl] = React.useState("");
+  const [showToast, setShowToast] = React.useState(false);
 
   const {
     mutate: shortenUrl,
@@ -20,23 +24,39 @@ const URLShortener = () => {
     });
   };
 
+  const handleCopyUrl = () => {
+    void navigator.clipboard.writeText(`https://short.bremm.dev/go/${shortenedUrl}`);
+    setShowToast(true);
+  };
+
+  React.useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShowToast(false);
+    }, 2500);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [showToast]);
+
   const showError =
     shortenError?.data?.zodError?.formErrors?.[0] && !isShorting;
   const errors = shortenError?.data?.zodError?.formErrors;
   const showShort = !showError && shortenedUrl && !isShorting;
 
   return (
-    <div className="w-11/12 max-w-7xl my-16 mx-auto">
+    <div className="mx-auto my-16 w-11/12 max-w-7xl">
+      {showToast && <Toast message="Short URL copied to clipboard!" setShowToast={setShowToast}/>}
       <form
         onSubmit={submitHandler}
         className="flex flex-col items-center gap-6"
       >
-        <div className="flex justify-center gap-4 w-full">
+        <div className="flex w-full justify-center gap-4">
           <input
             type="text"
             placeholder="Enter URL"
             value={inputUrl}
-            className="w-full max-w-md rounded-md border border-slate-800 bg-inherit py-2 px-4 focus:border-amber-100 focus:outline-none"
+            className="w-full max-w-md rounded-md border border-slate-800 bg-inherit px-4 py-2 focus:border-amber-100 focus:outline-none"
             onChange={(e) => setInputUrl(e.target.value)}
           />
 
@@ -50,7 +70,28 @@ const URLShortener = () => {
         </div>
 
         {showShort && (
-          <p className="text-center">Your short url:<a href={`https://short.bremm.dev/go/${shortenedUrl}`} className="block font-bold border-b selection:bg-amber-100 border-b-amber-100 hover:text-amber-100 my-1">{`https://short.bremm.dev/go/${shortenedUrl}`}</a></p>
+          <div className="text-center">
+            Your short url:
+            <div className="flex gap-3">
+              <a
+                href={`https://sh.bremm.dev/go/${shortenedUrl}`}
+                className="my-1 block border-b border-b-amber-100 font-bold selection:bg-amber-100 hover:text-amber-100"
+                target="_blank"
+              >{`https://sh.bremm.dev/go/${shortenedUrl}`}</a>
+              <button
+                type="button"
+                onClick={handleCopyUrl}
+              >
+                <Image
+                  src={copyIcon as string}
+                  width={16}
+                  height={16}
+                  className="transition-transform hover:scale-110"
+                  alt="copy icon"
+                />
+              </button>
+            </div>
+          </div>
         )}
         {showError && errors && <p>{errors[0]}</p>}
       </form>
