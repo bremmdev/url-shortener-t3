@@ -1,24 +1,27 @@
 import React from "react";
 import { api } from "@/utils/api";
+import arrowIcon from "@public/icons/arrow.svg";
+import Image from "next/image";
 
-type Props = {
-  initialCount: number;
-};
+const ShortCount = () => {
+  const { data: count, isLoading: countLoading } = api.url.getAll.useQuery();
 
-const ShortCount = ({ initialCount }: Props) => {
-  const { data: count, isLoading } = api.url.getAll.useQuery(undefined, {
-    initialData: initialCount,
-  });
-
-  console.log(isLoading);
-
-  return (
-    <div className="text-center text-slate-400 md:my-1 md:ml-10">
-      Already shortened{" "}
-      <span className="font extra-bold text-xl text-amber-100">{count}</span>{" "}
-      urls<span className="text-amber-100">.</span>
+  return !countLoading ? (
+    <div className="animate-fadeIn text-center text-slate-400 md:ml-2">
+       <Image
+          src={arrowIcon as string}
+          width={32}
+          height={32}
+          alt="arrow"
+          className="hidden md:inline md:-mt-3"
+        />
+        Already shortened{" "}
+        <span className="font extra-bold text-xl text-amber-100">{count}</span>{" "}
+        urls<span className="text-amber-100">.</span>
+      
+     
     </div>
-  );
+  ): <div className="h-7">&nbsp;</div>;
 };
 
 export default ShortCount;

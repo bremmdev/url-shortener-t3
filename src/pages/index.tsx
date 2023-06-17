@@ -1,16 +1,8 @@
-import type { InferGetStaticPropsType } from "next";
 import Head from "next/head";
 import ShortCount from "@/components/ShortCount";
 import URLShortener from "@/components/URLShortener";
-import arrowIcon from "@public/icons/arrow.svg";
-import Image from "next/image";
-import { createServerSideHelpers } from "@trpc/react-query/server";
-import { appRouter } from "@/server/api/root";
 
-const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
-
-  const initialCount = props.trpcState.queries[0]?.state.data as number
-
+const Home = () => {
   return (
     <>
       <Head>
@@ -19,19 +11,10 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="w-full">
-        <div className="relative mx-auto w-fit">
-          <h1 className="text-center text-3xl font-bold tracking-tighter text-amber-100 md:text-5xl">
-            URL Shortener
-          </h1>
-          <Image
-            src={arrowIcon as string}
-            width={32}
-            height={32}
-            alt="arrow"
-            className="absolute left-6 top-8 hidden md:left-10 md:top-12 md:block"
-          />
-        </div>
-        <ShortCount initialCount={initialCount}/>
+        <h1 className="text-center text-3xl font-bold tracking-tighter text-amber-100 md:text-5xl">
+          URL Shortener
+        </h1>
+        <ShortCount />
         <URLShortener />
       </div>
     </>
@@ -39,18 +22,3 @@ const Home = (props: InferGetStaticPropsType<typeof getStaticProps>) => {
 };
 
 export default Home;
-
-export const getStaticProps = async () => {
-  const helpers = createServerSideHelpers({
-    router: appRouter,
-    ctx: {},
-  });
-
-  await helpers.url.getAll.prefetch();
-
-  return {
-    props: {
-      trpcState: helpers.dehydrate(),
-    },
-  };
-};
