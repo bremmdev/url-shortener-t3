@@ -1,13 +1,15 @@
 import React from "react";
-import { api } from "@/utils/api";
 import copyIcon from "@public/icons/copy.svg";
 import Image from "next/image";
 import Toast from "@/components/Toast";
+import { api } from "@/utils/api";
 
 const URLShortener = () => {
   const [inputUrl, setInputUrl] = React.useState("");
   const [shortenedUrl, setShortenedUrl] = React.useState("");
   const [showToast, setShowToast] = React.useState(false);
+
+  const utils = api.useContext();
 
   const {
     mutate: shortenUrl,
@@ -20,6 +22,7 @@ const URLShortener = () => {
     shortenUrl(inputUrl, {
       onSuccess: (data) => {
         setShortenedUrl(data as string);
+        void utils.url.getAll.invalidate();
       },
     });
   };
@@ -45,11 +48,11 @@ const URLShortener = () => {
   const showShort = !showError && shortenedUrl && !isShorting;
 
   return (
-    <div className="mx-auto my-16 w-11/12 max-w-7xl">
+    <div className="mx-auto my-12 w-11/12 max-w-7xl">
       {showToast && <Toast message="Short URL copied to clipboard!" setShowToast={setShowToast}/>}
       <form
         onSubmit={submitHandler}
-        className="flex flex-col items-center gap-6"
+        className="flex flex-col items-center gap-10"
       >
         <div className="flex w-full justify-center gap-4">
           <input
@@ -63,7 +66,7 @@ const URLShortener = () => {
           <button
             className="focus-visible:ring-ring ring-offset-background inline-flex items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium text-slate-900 transition-colors hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
             type="submit"
-            disabled={isShorting}
+            disabled={isShorting || inputUrl.length === 0}
           >
             {isShorting ? "Shortening..." : "Shorten"}
           </button>

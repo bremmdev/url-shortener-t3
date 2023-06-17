@@ -1,7 +1,9 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-
+import ShortCount from "@/components/ShortCount";
 import URLShortener from "@/components/URLShortener";
+import arrowIcon from "@public/icons/arrow.svg";
+import Image from "next/image";
 
 const Home: NextPage = () => {
   return (
@@ -12,9 +14,19 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="w-full">
-        <h1 className="text-3xl text-center font-bold tracking-tighter text-amber-100 md:text-5xl">
-          URL Shortener
-        </h1>
+        <div className="relative w-fit mx-auto">
+          <h1 className="text-center text-3xl font-bold tracking-tighter text-amber-100 md:text-5xl">
+            URL Shortener
+          </h1>
+          <Image
+            src={arrowIcon as string}
+            width={32}
+            height={32}
+            alt="arrow"
+            className="hidden md:block absolute left-6 top-8 md:top-12 md:left-10"
+          />
+        </div>
+        <ShortCount />
         <URLShortener />
       </div>
     </>

@@ -23,4 +23,7 @@ export const urlRouter = createTRPCRouter({
       await storeUrl(url, shortUrl);
       return shortUrl;
     }),
+  getAll: publicProcedure.query(async () => {
+    return await redis.hlen("urls");
+  }),
 });
