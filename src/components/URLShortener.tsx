@@ -25,7 +25,7 @@ const URLShortener = () => {
   };
 
   const handleCopyUrl = () => {
-    void navigator.clipboard.writeText(`https://short.bremm.dev/go/${shortenedUrl}`);
+    void navigator.clipboard.writeText(`https://sh.bremm.dev/go/${shortenedUrl}`);
     setShowToast(true);
   };
 
