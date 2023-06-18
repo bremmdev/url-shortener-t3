@@ -112,7 +112,7 @@ const URLShortener = () => {
             />
             <div
               id="tooltip"
-              className="hidden absolute rounded-lg bg-amber-100 p-4 text-slate-950 -top-24 left-[20%] right-[20%] text-sm"
+              className="hidden absolute rounded-lg bg-amber-100 p-3 xs:p-4 text-slate-950 -top-24 left-[10%] right-[10%] sm:left-[20%] sm:right-[20%] text-xs xs:text-sm"
             >
               Add a custom ending (e.g. sh.bremm.dev/go/custom_tag instead of
               sh.bremm.dev/go/l6HYuH)
