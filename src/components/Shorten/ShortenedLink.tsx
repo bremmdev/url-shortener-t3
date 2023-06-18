@@ -4,17 +4,17 @@ import Image from "next/image";
 
 type Props = {
   shortenedUrl: string;
-  setShowToast: React.Dispatch<React.SetStateAction<boolean>>;
+  setToastMessage: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const ShortenedLink = (props: Props) => {
-  const { shortenedUrl, setShowToast } = props;
+  const { shortenedUrl, setToastMessage } = props;
 
   const handleCopyUrl = () => {
     void navigator.clipboard.writeText(
       `https://sh.bremm.dev/go/${shortenedUrl}`
     );
-    setShowToast(true);
+    setToastMessage("Copied to clipboard!");
   };
 
   return (

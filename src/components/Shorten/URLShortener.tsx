@@ -4,14 +4,15 @@ import { api } from "@/utils/api";
 import { TRPCClientError } from "@trpc/client";
 import { urlInputSchema } from "@/schema/url-schema";
 import ShortenedLink from "./ShortenedLink";
+import Image from "next/image";
+import helpIcon from "@public/icons/help.svg";
 
 const URLShortener = () => {
   const [inputUrl, setInputUrl] = React.useState("");
   const [customUrl, setCustomUrl] = React.useState("");
   const [shortenedUrl, setShortenedUrl] = React.useState("");
-  const [showToast, setShowToast] = React.useState(false);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
-  const [shortenSuccess, setShortenSuccess] = React.useState(false);
+  const [toastMessage, setToastMessage] = React.useState("");
 
   const utils = api.useContext();
 
@@ -25,7 +26,7 @@ const URLShortener = () => {
     setShortenedUrl(data as string);
     setInputUrl("");
     setCustomUrl("");
-    setShortenSuccess(true);
+    setToastMessage("URL successfully shortened!");
     void utils.url.getAll.invalidate();
   };
 
@@ -36,7 +37,6 @@ const URLShortener = () => {
       customUrl: customUrl.length > 0 ? customUrl : undefined,
     };
     const result = urlInputSchema.safeParse(input);
-    setShortenSuccess(false);
     setErrors({});
     const errors: Record<string, string> = {};
 
@@ -58,26 +58,6 @@ const URLShortener = () => {
     });
   };
 
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      setShowToast(false);
-    }, 2500);
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [showToast]);
-
-  React.useEffect(() => {
-    const timeout = setTimeout(() => {
-      setShortenSuccess(false);
-    }, 2500);
-
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [shortenSuccess]);
-
   const showError = shortenError && !isShorting;
 
   const error =
@@ -92,18 +72,8 @@ const URLShortener = () => {
 
   return (
     <div className="mx-auto my-6 w-11/12 max-w-7xl md:my-12">
-      {showToast && (
-        <Toast
-          message="Short URL copied to clipboard!"
-          setShowToast={setShowToast}
-        />
-      )}
-
-      {shortenSuccess && (
-        <Toast
-          message="URL successfully shortened!"
-          setShowToast={setShowToast}
-        />
+      {toastMessage && (
+        <Toast message={toastMessage} setToastMessage={setToastMessage} />
       )}
 
       <form
@@ -128,12 +98,27 @@ const URLShortener = () => {
             </p>
           )}
 
-          <label
-            htmlFor="customUrl"
-            className="mb-1 mt-4 font-bold text-slate-300"
-          >
-            Custom ending (optional)
-          </label>
+          <div className="relative mb-1 mt-4">
+            <label htmlFor="customUrl" className="font-bold text-slate-300">
+              Custom ending (optional)
+            </label>
+
+            <Image
+              src={helpIcon as string}
+              width={16}
+              height={16}
+              alt="help icon"
+              className="ml-1 mb-[2px] hidden xs:inline"
+            />
+            <div
+              id="tooltip"
+              className="hidden absolute rounded-lg bg-amber-100 p-4 text-slate-950 -top-24 left-[20%] right-[20%] text-sm"
+            >
+              Add a custom ending (e.g. sh.bremm.dev/go/custom_tag instead of
+              sh.bremm.dev/go/l6HYuH)
+            </div>
+          </div>
+
           <input
             type="text"
             placeholder="Enter custom ending"
@@ -164,7 +149,7 @@ const URLShortener = () => {
       {showShort && !showError && (
         <ShortenedLink
           shortenedUrl={shortenedUrl}
-          setShowToast={setShowToast}
+          setToastMessage={setToastMessage}
         />
       )}
     </div>
