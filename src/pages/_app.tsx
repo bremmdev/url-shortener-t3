@@ -11,7 +11,7 @@ const inter = Inter({
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <main
-      className={`${inter.variable} flex min-h-screen flex-col items-center gap-8 bg-slate-950 py-16 font-sans text-slate-300`}
+      className={`${inter.variable} flex min-h-screen flex-col items-center gap-8 bg-slate-950 py-16 font-sans text-slate-300 text-sm md:text-base`}
     >
       <Component {...pageProps} />
     </main>

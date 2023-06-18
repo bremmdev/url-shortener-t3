@@ -1,6 +1,6 @@
 import Head from "next/head";
-import ShortCount from "@/components/ShortCount";
-import URLShortener from "@/components/URLShortener";
+import ShortCount from "@/components/Shorten/ShortCount";
+import URLShortener from "@/components/Shorten/URLShortener";
 
 const Home = () => {
   return (
