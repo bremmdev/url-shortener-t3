@@ -9,7 +9,7 @@ export const urlRouter = createTRPCRouter({
   shorten: publicProcedure.input(urlInputSchema).mutation(async ({ input }) => {
     const { url, customUrl } = input;
 
-    // if custom short url is provided, check if it already exists
+    /* CUSTOM URL FLOW */
     if (customUrl) {
       const existingCustom = await redis.hget("short_urls", customUrl);
       if (existingCustom) {
@@ -20,24 +20,53 @@ export const urlRouter = createTRPCRouter({
       }
 
       //store custom short url in cache
-      await storeUrl(url, customUrl, true);
-      return customUrl;
+      try {
+        await storeUrl(url, customUrl, true);
+        return customUrl;
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Error storing custom URL",
+        });
+      }
     }
 
-    // if url already exists, return existing short url
-    const existingUrl = await redis.hget("urls", url);
-    if (existingUrl) {
-      return existingUrl;
+    /* NON-CUSTOM URL FLOW */
+    // if url already exists, return existing short url from cache
+    try {
+      const existingUrl = await redis.hget("urls", url);
+      if (existingUrl) {
+        return existingUrl;
+      }
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error connecting to database",
+      });
     }
 
     //generate unique short url
     const shortUrl = await generateShortUrl();
 
     //store newly created shortUrl in cache
-    await storeUrl(url, shortUrl, false);
-    return shortUrl;
+    try {
+      await storeUrl(url, shortUrl, false);
+      return shortUrl;
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error storing URL",
+      });
+    }
   }),
   getAll: publicProcedure.query(async () => {
-    return await redis.hlen("short_urls");
+    try {
+      return await redis.hlen("short_urls");
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Error connecting to database",
+      });
+    }
   }),
 });

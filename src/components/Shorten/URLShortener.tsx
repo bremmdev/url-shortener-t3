@@ -33,7 +33,7 @@ const URLShortener = () => {
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const input = {
-      url: inputUrl,
+      url: inputUrl.trim(),
       customUrl: customUrl.length > 0 ? customUrl : undefined,
     };
     const result = urlInputSchema.safeParse(input);
@@ -48,7 +48,6 @@ const URLShortener = () => {
 
       //set the errors
       setErrors(errors);
-
       return;
     }
 
